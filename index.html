@@ -1223,11 +1223,11 @@
             promptSection.style.animationDelay = "0.4s";
 
             // 生成介面上的解讀總結
-            let summaryHtml = `<strong>本卦：</strong>第 ${origData["第幾卦"]} 卦 ${origData.name}（下卦：${origData.down}卦，上卦：${origData.up}卦）<br>`;
+            let summaryHtml = `<strong>本卦：</strong>${ichingPrompts.formatGuaName(origData)}<br>`;
             summaryHtml += `<strong>變爻：</strong>${changingIndices.length} 個<br>`;
             
             if (changedData) {
-                summaryHtml += `<strong>之卦：</strong>第 ${changedData["第幾卦"]} 卦 ${changedData.name}（下卦：${changedData.down}卦，上卦：${changedData.up}卦）<br>`;
+                summaryHtml += `<strong>之卦：</strong>${ichingPrompts.formatGuaName(changedData)}<br>`;
             }
 
             let guide = ichingPrompts.getUIGuide(changingIndices, origData, changedData);
