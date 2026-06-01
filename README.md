@@ -1,14 +1,54 @@
-# 易經金錢卦 (I-Ching Coin Toss) - Workflow Specification
+# 易經金錢卦 (I-Ching Coin Toss)
 
-本文件記錄專案的預期使用者流程 (User Flow)、邊界情況 (Edge Cases) 與測試目標 (Testing Targets)。任何新功能開發或 UI 修改，都必須確保不破壞此處列出的行為。
+一個以純前端技術打造的易經金錢卦沉浸式線上占卜網頁。透過逼真的 3D 銅錢翻轉動畫、頌缽音效與傳統易經卦象演算法，為使用者帶來充滿儀式感的數位占卜體驗，並能自動產生精準的 Prompt 讓 AI 進行深度解卦。
 
-## 0. 跨平台與裝置相容性 (Cross-Platform Compatibility)
+👉 **[線上體驗連結 (Live Demo)](https://chu-mi-labs.github.io/i-ching/)**
+
+---
+
+## 🌟 專案特色 (Features)
+
+*   **沉浸式儀式感**：精緻的背景設計、頌缽與銅錢清脆的音效，搭配 3D 銅錢翻轉動畫。
+*   **跨平台支援**：純靜態網頁設計，無論在 Windows/macOS 電腦端，或是 iOS/Android 手機端皆能完美呈現。
+*   **動態卦象演化**：支援「本卦」與「之卦」的 3D 牌卡翻轉展演，變爻達 3 個以上更會觸發「太極裂開」特效。
+*   **一鍵 AI 解卦**：依據朱熹《易贊》規則，精準判定 0-6 個變爻的解卦重點，並自動產生 Prompt 讓使用者一鍵複製，貼給 ChatGPT 或 Claude 進行解卦。
+*   **100% 隱私安全**：無後端伺服器，所有運算皆在使用者瀏覽器本地執行，保證占卜隱私。
+
+## 🛠️ 技術堆疊 (Tech Stack)
+
+*   **HTML5 / CSS3**: 採用純原生的 CSS 3D 變形 (Transforms) 與轉場動畫 (Transitions)，無依賴任何外部前端框架。
+*   **Vanilla JavaScript (ES6)**: 模組化管理占卜演算法 (`iching_core.js`) 與六十四卦資料集 (`iching_data.js`)。
+*   **GitHub Pages**: 自動化部署與靜態網站代管。
+
+## 🚀 本地開發與運行 (Installation & Usage)
+
+本專案為純靜態網頁，無需安裝任何複雜的編譯工具。
+
+1. **Clone 專案**：
+   ```bash
+   git clone https://github.com/chu-mi-labs/i-ching.git
+   cd i-ching
+   ```
+2. **啟動本地伺服器** (建議使用本機 Server 測試音效與剪貼簿功能)：
+   ```bash
+   python3 -m http.server 8000
+   ```
+3. **瀏覽網頁**：
+   打開瀏覽器前往 `http://localhost:8000`
+
+---
+
+## 📖 系統工作流程與測試規格 (Workflow & Spec)
+
+本區段記錄專案的預期使用者流程 (User Flow)、邊界情況 (Edge Cases) 與測試目標 (Testing Targets)。任何新功能開發或 UI 修改，都必須確保不破壞此處列出的行為。
+
+### 0. 跨平台與裝置相容性 (Cross-Platform Compatibility)
 本應用程式為純靜態網頁，必須確保在以下環境皆能正常顯示與流暢互動：
 *   **桌上型電腦 (Desktop)**: Windows (Chrome, Edge) / macOS (Safari, Chrome)
 *   **行動裝置 (Mobile)**: iOS (Safari, Chrome) / Android (Chrome)
 *   所有 3D 翻面動畫、音效播放、剪貼簿複製等核心功能，皆需在上述平台實測通過，特別注意行動裝置瀏覽器的原生限制（如雙擊放大、3D 渲染鏡像 Bug 等）。
 
-## 1. 核心使用者流程 (Core User Flow)
+### 1. 核心使用者流程 (Core User Flow)
 
 1. **進入網站與初始狀態**：
    - 載入頁面後，應看見「易經金錢卦」標題與「問卦三守則」。
@@ -42,14 +82,14 @@
      * **6 個變爻 (六爻全變)**：若是乾卦或坤卦，則用特別的「用九」或「用六」解讀；其餘卦象則以「之卦」的卦辭為主進行解讀。
    - 提供「一鍵複製」按鈕（白色字體）。複製成功後按鈕會變為綠色「✅ 已複製」，2 秒後自動還原。
 
-## 2. 邊界情況與防呆機制 (Edge Cases)
+### 2. 邊界情況與防呆機制 (Edge Cases)
 
 *   **空白或純空白字元的問題**：若使用者未輸入問題或只輸入空白鍵，點擊「開始起卦」時，應強制帶入預設文字「我想了解目前的運勢發展」。
 *   **動畫期間的干擾**：擲筊動畫進行中，必須強制禁用 (Disable) 擲筊按鈕，防止使用者狂點導致邏輯與陣列錯亂。
 *   **無變爻的純卦**：若六次擲筊皆為少陰(8)或少陽(7)，沒有產生任何變爻，則系統不會顯示「查看之卦 ➡️」按鈕，Prompt 生成邏輯也只會包含本卦。
 *   **剪貼簿 (Clipboard) 降級處理**：若瀏覽器不支援 `navigator.clipboard.writeText`（或在某些非 HTTPS 環境下），應優雅降級使用 `document.execCommand('copy')` 確保複製功能依然可用。
 
-## 3. 測試目標 (Testing Targets)
+### 3. 測試目標 (Testing Targets)
 
 進行 E2E 測試或人工驗證時，請務必覆蓋以下場景：
 
