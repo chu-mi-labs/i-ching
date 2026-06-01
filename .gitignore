@@ -1,6 +1,19 @@
-AGENTS.md
-workflow_spec.md
-node_modules/
-test-results/
-playwright-report/
-.cache/
+# 1. 預設排除目錄下的所有檔案與資料夾
+*
+
+# 2. 允許 Git 系統檔案 (確保版控正常運作)
+!/.git/
+!.gitignore
+
+# 3. 允許 Runtime 必須的網頁核心檔案
+!index.html
+!iching_core.js
+!iching_data.js
+
+# 4. 允許 Runtime 必須的圖片資產
+!bg.png
+!bg_toss.png
+!image.png
+
+# 5. 允許 GitHub Pages / Cloudflare Pages 的伺服器設定檔
+!_headers
