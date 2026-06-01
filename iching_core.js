@@ -7,6 +7,8 @@
         root.IChingCore = api;
     }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+    const LINE_POS_NAMES = ['初', '二', '三', '四', '五', '上'];
+
     function normalizeQuestion(value) {
         return String(value || '').trim();
     }
@@ -25,8 +27,8 @@
 
     function getLineName(index, isYang) {
         const num = isYang ? '九' : '六';
-        const pos = ['初', '二', '三', '四', '五', '上'][index];
         if (index < 0 || index > 5) throw new Error(`Invalid line index: ${index}`);
+        const pos = LINE_POS_NAMES[index];
         if (index === 0) return '初' + num;
         if (index === 5) return '上' + num;
         return num + pos;
@@ -56,13 +58,14 @@
     }
 
     function getChangedLineSymbol(sum) {
-        getLineInfo(sum);
-        return sum === 7 || sum === 6 ? '━━━━━' : '━━ ━━';
+        const info = getLineInfo(sum);
+        const finalIsYang = info.change ? info.type === 'yin' : info.type === 'yang';
+        return finalIsYang ? '━━━━━' : '━━ ━━';
     }
 
     function getOriginalLineSymbol(sum) {
         const info = getLineInfo(sum);
-        return info.symbol === '—' || info.symbol === '○' ? '━━━━━' : '━━ ━━';
+        return info.type === 'yang' ? '━━━━━' : '━━ ━━';
     }
 
     function getCoinSpinX(isYang, extraRound) {
@@ -72,12 +75,11 @@
     function buildPromptText(question, tosses, origData, changedData, changingIndices, promptBuilder) {
         const changingCount = changingIndices.length;
         let allLinesDetail = '';
-        const linePosNames = ['初', '二', '三', '四', '五', '上'];
 
         for (let i = 5; i >= 0; i--) {
             const info = getLineInfo(tosses[i]);
             const isChange = info.change ? '【變爻】' : '';
-            allLinesDetail += `- ${linePosNames[i]}爻：${info.name}${info.symbol}　${isChange}\n`;
+            allLinesDetail += `- ${LINE_POS_NAMES[i]}爻：${info.name}${info.symbol}　${isChange}\n`;
         }
 
         let changeText = '';

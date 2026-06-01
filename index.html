@@ -1122,21 +1122,43 @@
             return IChingCore.getLineInfo(sum);
         }
 
+        function createLineDOM(index, sum, isZhiGua, changingIndices) {
+            const lineNum = index + 1;
+            const info = getLineInfo(sum);
+            
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'line-item fade-in';
+            
+            let drawSymbol;
+            let changeMarkText = '';
+            let labelText = '';
+            
+            if (isZhiGua) {
+                const isChanged = changingIndices.includes(index);
+                if (isChanged) lineDiv.classList.add('zhi-gua-changed-line');
+                drawSymbol = IChingCore.getChangedLineSymbol(sum);
+                labelText = `第${lineNum}爻`;
+                if (isChanged) changeMarkText = '變';
+            } else {
+                if (info.change) lineDiv.classList.add('changing-line');
+                drawSymbol = IChingCore.getOriginalLineSymbol(sum);
+                labelText = `第${lineNum}爻 · ${info.name}`;
+                if (info.change) changeMarkText = '動';
+            }
+            
+            const labelStr = `<div class="line-label">${labelText}</div>`;
+            const changeMark = changeMarkText ? `<div class="change-mark">${changeMarkText}</div>` : `<div class="no-change-mark"></div>`;
+            
+            lineDiv.innerHTML = `${labelStr}<div class="line-symbol">${drawSymbol}</div>${changeMark}`;
+            return lineDiv;
+        }
+
         function displaySingleLine(index) {
             const lineNum = index + 1;
             document.getElementById('toss-status').textContent = `第${lineNum}爻，天機顯現`;
-            const info = getLineInfo(tosses[index]);
             playDing(1 + index * 0.1);
 
-            const lineDiv = document.createElement('div');
-            lineDiv.className = 'line-item fade-in';
-            if (info.change) lineDiv.classList.add('changing-line');
-
-            let drawSymbol = IChingCore.getOriginalLineSymbol(tosses[index]);
-            const labelStr = `<div class="line-label">第${lineNum}爻 · ${info.name}</div>`;
-            const changeMark = info.change ? `<div class="change-mark">動</div>` : `<div class="no-change-mark"></div>`;
-
-            lineDiv.innerHTML = `${labelStr}<div class="line-symbol">${drawSymbol}</div>${changeMark}`;
+            const lineDiv = createLineDOM(index, tosses[index], false, []);
             document.getElementById('hexagram-lines').append(lineDiv);
         }
 
@@ -1192,22 +1214,9 @@
 
             // 從下往上繪製
             for (let i = 0; i < 6; i++) {
-                const s = tosses[i];
-                // 判斷之卦爻符號
-                let drawSymbol = IChingCore.getChangedLineSymbol(s);
-                let isChanged = changingIndices.includes(i);
-
-                const lineDiv = document.createElement('div');
-                lineDiv.className = 'line-item fade-in';
-                if (isChanged) lineDiv.classList.add('zhi-gua-changed-line');
-
+                const lineDiv = createLineDOM(i, tosses[i], true, changingIndices);
                 lineDiv.style.opacity = 1;
                 lineDiv.style.transform = 'translateY(0)';
-
-                const labelStr = `<div class="line-label">第${i + 1}爻</div>`;
-                const changeMark = isChanged ? `<div class="change-mark">變</div>` : `<div class="no-change-mark"></div>`;
-
-                lineDiv.innerHTML = `${labelStr}<div class="line-symbol">${drawSymbol}</div>${changeMark}`;
                 container.append(lineDiv);
             }
         }
