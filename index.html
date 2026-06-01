@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; font-src 'self'; upgrade-insecure-requests">
     <meta name="referrer" content="no-referrer">
-    <title>易經金錢卦占卜</title>
+    <title>易經金錢卦</title>
     <style>
         :root {
             /* 中式水墨主題（依據參考圖） */
@@ -769,7 +769,7 @@
 <body>
     <div class="container">
         <header style="justify-content: center;">
-            <h1>易經銅錢卦</h1>
+            <h1>易經金錢卦</h1>
         </header>
 
         <div id="setup-area" class="input-area">
@@ -1223,11 +1223,11 @@
             promptSection.style.animationDelay = "0.4s";
 
             // 生成介面上的解讀總結
-            let summaryHtml = `<strong>本卦：</strong>第 ${origData["第幾卦"]} 卦 ${origData.name}（${origData.up}上${origData.down}下）<br>`;
+            let summaryHtml = `<strong>本卦：</strong>第 ${origData["第幾卦"]} 卦 ${origData.name}（下卦：${origData.down}卦，上卦：${origData.up}卦）<br>`;
             summaryHtml += `<strong>變爻：</strong>${changingIndices.length} 個<br>`;
-            if (changingIndices.length > 0) {
-                // 將變卦改為之卦
-                summaryHtml += `<strong>之卦：</strong>第 ${changedData["第幾卦"]} 卦 ${changedData.name}（${changedData.up}上${changedData.down}下）<br>`;
+            
+            if (changedData) {
+                summaryHtml += `<strong>之卦：</strong>第 ${changedData["第幾卦"]} 卦 ${changedData.name}（下卦：${changedData.down}卦，上卦：${changedData.up}卦）<br>`;
             }
 
             let guide = ichingPrompts.getUIGuide(changingIndices, origData, changedData);
