@@ -27,8 +27,6 @@ i-ching/
 ├── index.html        # 主網頁架構、UI 樣式與 DOM 互動邏輯
 ├── iching_core.js    # 核心演算法 (擲筊邏輯、變爻判定、狀態推演)
 ├── iching_data.js    # 易經六十四卦與三百八十四爻的資料集與 Prompt 生成輔助
-├── bg.png            # 網頁主要水墨背景圖
-├── bg_toss.png       # 擲筊區水墨背景圖
 └── README.md         # 專案說明文件
 ```
 

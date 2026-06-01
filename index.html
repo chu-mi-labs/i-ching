@@ -17,6 +17,10 @@
             /* 墨黑 */
             --highlight-color: #c96a25;
             /* 朱砂/橘銅色 */
+            --zhi-highlight-color: #6f7f62;
+            /* 青苔灰綠，標示之卦重點 */
+            --scroll-edge-color: rgba(111, 90, 58, 0.34);
+            --scroll-bg: rgba(241, 233, 211, 0.88);
             --panel-bg: rgba(235, 229, 215, 0.85);
             /* 淺墨背景(增加不透明度以利閱讀) */
             --border-color: rgba(44, 48, 50, 0.2);
@@ -596,9 +600,8 @@
             text-align: center;
         }
 
-        /* 3D Flip Card Styles */
+        /* Flip Card Styles */
         .flip-card-container {
-            perspective: 1000px;
             width: 100%;
             max-width: 320px;
             margin: 0 auto 20px auto;
@@ -606,35 +609,60 @@
         
         .flip-card-inner {
             position: relative;
+            display: grid;
             width: 100%;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            -webkit-transform-style: preserve-3d;
+            transform-origin: center;
         }
         
-        .flip-card-inner.is-flipped {
-            transform: rotateY(180deg);
+        .flip-card-inner.is-turning {
+            animation: paperTurn 0.52s ease-in-out;
+        }
+
+        @keyframes paperTurn {
+            0% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+
+            45% {
+                transform: scaleX(0.08);
+                opacity: 0.72;
+            }
+
+            55% {
+                transform: scaleX(0.08);
+                opacity: 0.72;
+            }
+
+            100% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
         }
         
         .flip-card-front, .flip-card-back {
+            grid-area: 1 / 1;
             width: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: var(--bg-color); /* 填滿底色，防止背面的字透過去 */
-        }
-        
-        .flip-card-front {
-            position: relative;
+            background-color: transparent;
+            transition: opacity 0.18s ease;
         }
         
         .flip-card-back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: rotateY(180deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flip-card-inner.is-flipped .flip-card-front {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flip-card-inner.is-flipped .flip-card-back {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .hex-label {
@@ -647,8 +675,8 @@
         }
 
         .evolution-arrow {
-            font-size: 1.1rem;
-            color: var(--text-color);
+            font-size: 1rem;
+            color: #7a5d39;
             margin: 15px auto;
             text-align: center;
             font-weight: bold;
@@ -660,8 +688,10 @@
             justify-content: center;
             gap: 8px;
             padding: 10px 24px;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.05);
+            border-radius: 999px;
+            border: 1px solid rgba(122, 93, 57, 0.22);
+            background: rgba(232, 220, 194, 0.58);
+            box-shadow: 0 6px 18px rgba(80, 60, 34, 0.08);
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
@@ -671,8 +701,13 @@
         }
 
         .zhi-gua-changed-line .line-symbol {
-            color: #d4af37;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            color: var(--zhi-highlight-color);
+            text-shadow: 0 0 8px rgba(111, 127, 98, 0.35);
+        }
+
+        .zhi-gua-changed-line .change-mark {
+            color: var(--zhi-highlight-color);
+            border-color: var(--zhi-highlight-color);
         }
 
         #taiji-overlay {
@@ -828,6 +863,43 @@
         .guide-text strong {
             color: var(--highlight-color);
         }
+
+        #result-area.zhi-scroll-mode .guide-text {
+            position: relative;
+            padding: 24px 22px;
+            background:
+                linear-gradient(90deg, rgba(129, 100, 62, 0.18), transparent 12%, transparent 88%, rgba(129, 100, 62, 0.18)),
+                var(--scroll-bg);
+            border: 1px solid var(--scroll-edge-color);
+            border-left: 1px solid var(--scroll-edge-color);
+            border-radius: 3px;
+            box-shadow:
+                inset 11px 0 18px rgba(107, 83, 50, 0.11),
+                inset -11px 0 18px rgba(107, 83, 50, 0.11),
+                0 10px 24px rgba(69, 52, 31, 0.10);
+        }
+
+        #result-area.zhi-scroll-mode .guide-text::before,
+        #result-area.zhi-scroll-mode .guide-text::after {
+            content: "";
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(111, 90, 58, 0.42), transparent);
+        }
+
+        #result-area.zhi-scroll-mode .guide-text::before {
+            top: 10px;
+        }
+
+        #result-area.zhi-scroll-mode .guide-text::after {
+            bottom: 10px;
+        }
+
+        #result-area.zhi-scroll-mode .guide-text strong {
+            color: #7a5d39;
+        }
     </style>
 </head>
 
@@ -876,7 +948,7 @@
             
             <div style="text-align: center;">
                 <div id="evolution-arrow" class="evolution-arrow" style="display: none;" onclick="toggleFlip()">
-                    <span id="flip-btn-text">查看之卦 ➡️</span>
+                    <span id="flip-btn-text">查看之卦 →</span>
                 </div>
             </div>
         </div>
@@ -1111,8 +1183,10 @@
             document.getElementById('evolution-arrow').style.display = 'none';
             document.getElementById('evolution-arrow').style.opacity = '0';
             document.getElementById('hex-flip-card').classList.remove('is-flipped');
-            document.getElementById('flip-btn-text').textContent = '查看之卦 ➡️';
+            document.getElementById('hex-flip-card').classList.remove('is-turning');
+            document.getElementById('flip-btn-text').textContent = '查看之卦 →';
             document.getElementById('result-area').style.display = 'none';
+            document.getElementById('result-area').classList.remove('zhi-scroll-mode');
 
             document.getElementById('toss-btn').style.display = 'inline-block';
             document.getElementById('toss-btn').textContent = "擲筊 (第 1 爻)";
@@ -1206,7 +1280,17 @@
             return IChingCore.getLineInfo(sum);
         }
 
-        function createLineDOM(index, sum, isZhiGua, changingIndices) {
+        function getZhiGuaFocusIndices(changingIndices) {
+            if (changingIndices.length === 4 || changingIndices.length === 5) {
+                return [0, 1, 2, 3, 4, 5].filter(i => !changingIndices.includes(i));
+            }
+            if (changingIndices.length === 6) {
+                return [0, 1, 2, 3, 4, 5];
+            }
+            return changingIndices;
+        }
+
+        function createLineDOM(index, sum, isZhiGua, changingIndices, focusIndices) {
             const lineNum = index + 1;
             const info = getLineInfo(sum);
 
@@ -1219,10 +1303,11 @@
 
             if (isZhiGua) {
                 const isChanged = changingIndices.includes(index);
-                if (isChanged) lineDiv.classList.add('zhi-gua-changed-line');
+                const isFocused = (focusIndices || changingIndices).includes(index);
+                if (isFocused) lineDiv.classList.add('zhi-gua-changed-line');
                 drawSymbol = IChingCore.getChangedLineSymbol(sum);
-                labelText = `第${lineNum}爻`;
-                if (isChanged) changeMarkText = '變';
+                labelText = `第${lineNum}爻 · ${isChanged ? '已變' : '未變'}`;
+                if (isFocused) changeMarkText = '重';
             } else {
                 if (info.change) lineDiv.classList.add('changing-line');
                 drawSymbol = IChingCore.getOriginalLineSymbol(sum);
@@ -1299,10 +1384,11 @@
             document.getElementById('changed-hex-label').style.opacity = '1';
             const container = document.getElementById('changed-hexagram-lines');
             container.innerHTML = '';
+            const focusIndices = getZhiGuaFocusIndices(changingIndices);
 
             // 從下往上繪製
             for (let i = 0; i < 6; i++) {
-                const lineDiv = createLineDOM(i, tosses[i], true, changingIndices);
+                const lineDiv = createLineDOM(i, tosses[i], true, changingIndices, focusIndices);
                 lineDiv.style.opacity = 1;
                 lineDiv.style.transform = 'translateY(0)';
                 container.append(lineDiv);
@@ -1312,17 +1398,25 @@
         function toggleFlip() {
             const card = document.getElementById('hex-flip-card');
             const btnText = document.getElementById('flip-btn-text');
-            card.classList.toggle('is-flipped');
-            
-            if (card.classList.contains('is-flipped')) {
-                btnText.textContent = '⬅️ 返回本卦';
-            } else {
-                btnText.textContent = '查看之卦 ➡️';
-            }
+            if (card.classList.contains('is-turning')) return;
+
+            const willShowZhiGua = !card.classList.contains('is-flipped');
+            card.classList.add('is-turning');
+
+            setTimeout(() => {
+                card.classList.toggle('is-flipped', willShowZhiGua);
+                btnText.textContent = willShowZhiGua ? '← 返回本卦' : '查看之卦 →';
+            }, 260);
+
+            setTimeout(() => {
+                card.classList.remove('is-turning');
+            }, 540);
         }
 
         function renderResult(question, origData, changedData, changingIndices, hasZhiGua) {
-            document.getElementById('result-area').style.display = 'block';
+            const resultArea = document.getElementById('result-area');
+            resultArea.style.display = 'block';
+            resultArea.classList.toggle('zhi-scroll-mode', changingIndices.length >= 3);
 
             const infoPanel = document.getElementById('hexagram-info');
             const promptSection = document.getElementById('prompt-section');
