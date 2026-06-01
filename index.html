@@ -563,17 +563,30 @@
         }
 
         .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: transparent;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 5px 10px;
-            border-radius: 4px;
+            display: block;
+            margin: 15px auto 10px;
+            background-color: var(--highlight-color);
+            color: #141210;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: bold;
+            box-shadow: 0 4px 10px rgba(186, 92, 37, 0.4);
+            animation: pulse-glow 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(186, 92, 37, 0.6);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(186, 92, 37, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(186, 92, 37, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(186, 92, 37, 0); }
         }
 
         .subtext {
@@ -817,12 +830,12 @@
             </div>
 
             <div id="prompt-section" class="result-panel">
-                <h3 style="display: flex; justify-content: space-between; align-items: center;">
-                    📋 複製提示詞，貼到你的 AI 解讀
-                    <button class="copy-btn" onclick="copyPrompt()">一鍵複製</button>
-                </h3>
+                <h3>📋 複製提示詞，貼到你的 AI 解讀</h3>
                 <div class="prompt-box" onclick="copyPrompt()" style="cursor: pointer;" title="點擊即可複製">
                     <div id="prompt-content" class="prompt-content"></div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="copy-btn" onclick="copyPrompt()">一鍵複製</button>
                 </div>
                 <p class="subtext">將上方提示詞貼到 Claude / ChatGPT / Gemini 即可獲得專業解讀（點擊區塊亦可複製）</p>
             </div>
@@ -836,7 +849,7 @@
 
     <div id="meditation-screen">
         <div class="meditation-text">
-            請閉上雙眼，靜心默念您的問題<br>
+            請閉上雙眼<br>靜心默念您的問題<br>
             <div class="meditation-countdown" id="meditation-countdown">5</div>
         </div>
     </div>
@@ -1125,14 +1138,14 @@
         function createLineDOM(index, sum, isZhiGua, changingIndices) {
             const lineNum = index + 1;
             const info = getLineInfo(sum);
-            
+
             const lineDiv = document.createElement('div');
             lineDiv.className = 'line-item fade-in';
-            
+
             let drawSymbol;
             let changeMarkText = '';
             let labelText = '';
-            
+
             if (isZhiGua) {
                 const isChanged = changingIndices.includes(index);
                 if (isChanged) lineDiv.classList.add('zhi-gua-changed-line');
@@ -1145,10 +1158,10 @@
                 labelText = `第${lineNum}爻 · ${info.name}`;
                 if (info.change) changeMarkText = '動';
             }
-            
+
             const labelStr = `<div class="line-label">${labelText}</div>`;
             const changeMark = changeMarkText ? `<div class="change-mark">${changeMarkText}</div>` : `<div class="no-change-mark"></div>`;
-            
+
             lineDiv.innerHTML = `${labelStr}<div class="line-symbol">${drawSymbol}</div>${changeMark}`;
             return lineDiv;
         }
@@ -1234,7 +1247,7 @@
             // 生成介面上的解讀總結
             let summaryHtml = `<strong>本卦：</strong>${ichingPrompts.formatGuaName(origData)}<br>`;
             summaryHtml += `<strong>變爻：</strong>${changingIndices.length} 個<br>`;
-            
+
             if (changedData) {
                 summaryHtml += `<strong>之卦：</strong>${ichingPrompts.formatGuaName(changedData)}<br>`;
             }
