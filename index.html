@@ -782,7 +782,7 @@
 <body>
     <div class="container">
         <header style="justify-content: center;">
-            <h1>易經金錢卦</h1>
+            <h1 id="main-title" style="cursor: default; user-select: none;">易經金錢卦</h1>
         </header>
 
         <div id="setup-area" class="input-area">
@@ -1064,9 +1064,18 @@
             const btn = document.getElementById('toss-btn');
             btn.disabled = true;
 
-            const c1 = Math.random() < 0.5 ? 2 : 3;
-            const c2 = Math.random() < 0.5 ? 2 : 3;
-            const c3 = Math.random() < 0.5 ? 2 : 3;
+            let c1, c2, c3;
+            if (window.isTestMode) {
+                // 測試模式：強制交替產生老陰(6)與老陽(9)
+                const isYin = currentLineCount % 2 === 0;
+                c1 = isYin ? 2 : 3;
+                c2 = isYin ? 2 : 3;
+                c3 = isYin ? 2 : 3;
+            } else {
+                c1 = Math.random() < 0.5 ? 2 : 3;
+                c2 = Math.random() < 0.5 ? 2 : 3;
+                c3 = Math.random() < 0.5 ? 2 : 3;
+            }
             const sum = c1 + c2 + c3;
 
             const faces = [c1, c2, c3].sort(() => Math.random() - 0.5);
@@ -1324,6 +1333,25 @@
             tosses = [];
         }
 
+    </script>
+    <script>
+        window.isTestMode = false;
+        let secretClickCount = 0;
+        let secretClickTimer = null;
+        
+        document.getElementById('main-title').addEventListener('click', () => {
+            secretClickCount++;
+            clearTimeout(secretClickTimer);
+            secretClickTimer = setTimeout(() => {
+                secretClickCount = 0;
+            }, 1000);
+            
+            if (secretClickCount >= 5) {
+                window.isTestMode = !window.isTestMode;
+                alert(window.isTestMode ? "🔧 進入「全變爻」測試模式 (必定觸發動畫)" : "🔧 關閉測試模式");
+                secretClickCount = 0;
+            }
+        });
     </script>
 </body>
 
