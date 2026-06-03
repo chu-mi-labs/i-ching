@@ -83,7 +83,7 @@ const hexagrams = {
 
 const ichingPrompts = {
     // 共用的卦象名稱與上下卦格式化函數
-    formatGuaName: function(data) {
+    formatGuaName: function (data) {
         if (!data) return '無';
         return `第 ${data["第幾卦"]} 卦 ${data.name}（下卦：${data.down}卦，上卦：${data.up}卦）`;
     },
