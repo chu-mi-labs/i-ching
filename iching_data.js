@@ -155,7 +155,7 @@ const ichingPrompts = {
 
         let zhiGuaSection = '';
         let adviceNumber = '6';
-        if (count > 0) {
+        if (count > 3) {
             zhiGuaSection = `
 6. **之卦走向**
    說明從「${origData.name}」變為「${targetChangedName}」的轉化意義，
