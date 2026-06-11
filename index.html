@@ -588,9 +588,17 @@
         }
 
         @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(186, 92, 37, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(186, 92, 37, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(186, 92, 37, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(186, 92, 37, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(186, 92, 37, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(186, 92, 37, 0);
+            }
         }
 
         .subtext {
@@ -606,14 +614,14 @@
             max-width: 320px;
             margin: 0 auto 20px auto;
         }
-        
+
         .flip-card-inner {
             position: relative;
             display: grid;
             width: 100%;
             transform-origin: center;
         }
-        
+
         .flip-card-inner.is-turning {
             animation: paperTurn 0.52s ease-in-out;
         }
@@ -639,8 +647,9 @@
                 opacity: 1;
             }
         }
-        
-        .flip-card-front, .flip-card-back {
+
+        .flip-card-front,
+        .flip-card-back {
             grid-area: 1 / 1;
             width: 100%;
             display: flex;
@@ -649,7 +658,7 @@
             background-color: transparent;
             transition: opacity 0.18s ease;
         }
-        
+
         .flip-card-back {
             opacity: 0;
             pointer-events: none;
@@ -695,7 +704,7 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         .evolution-arrow:active {
             transform: scale(0.95);
         }
@@ -926,7 +935,8 @@
             transition: all 0.3s ease;
         }
 
-        .toss-mode-select:hover, .toss-mode-select:focus {
+        .toss-mode-select:hover,
+        .toss-mode-select:focus {
             background-color: rgba(235, 229, 215, 0.8);
             border-color: var(--highlight-color);
         }
@@ -952,12 +962,12 @@
                     <li><strong>莫問非分：</strong>以自身相關之事為主，不卜違背常理之事。</li>
                 </ul>
             </div>
-            
+
             <div class="toss-mode-container">
-                <label for="toss-mode-select">擲筊模式：</label>
+                <label for="toss-mode-select">擲銅板動畫模式：</label>
                 <select id="toss-mode-select" class="toss-mode-select">
-                    <option value="manual">手動擲筊 (需點擊 6 次)</option>
-                    <option value="auto">自動擲筊 (自動連擲 6 爻)</option>
+                    <option value="manual">手動模式 (需點擊 6 次)</option>
+                    <option value="auto">自動模式 (自動連擲 6 爻)</option>
                     <option value="skip">直接觀卦 (跳過動畫)</option>
                 </select>
             </div>
@@ -985,7 +995,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div style="text-align: center;">
                 <div id="evolution-arrow" class="evolution-arrow" style="display: none;" onclick="toggleFlip()">
                     <span id="flip-btn-text">查看之卦 →</span>
@@ -1397,7 +1407,7 @@
             initTossArea();
             document.getElementById('toss-action-area').style.display = 'none';
             document.getElementById('toss-status').textContent = "卦象已成，天機顯現";
-            
+
             for (let i = 0; i < 6; i++) {
                 let c1, c2, c3;
                 if (window.isTestMode) {
@@ -1412,12 +1422,12 @@
                 }
                 const sum = c1 + c2 + c3;
                 tosses.push(sum);
-                
+
                 const lineDiv = createLineDOM(i, sum, false, []);
                 document.getElementById('hexagram-lines').append(lineDiv);
             }
             currentLineCount = 6;
-            
+
             setTimeout(() => showResult(questionText), 800);
         }
 
@@ -1430,7 +1440,7 @@
             const changedData = getHexagramData(changedBinary);
 
             document.getElementById('orig-hex-label').style.opacity = '1';
-            
+
             const tossMode = document.getElementById('toss-mode-select').value;
 
             if (IChingCore.shouldShowZhiGuaAnimation(changingIndices)) {
@@ -1607,14 +1617,14 @@
         window.isTestMode = false;
         let secretClickCount = 0;
         let secretClickTimer = null;
-        
+
         document.getElementById('main-title').addEventListener('click', () => {
             secretClickCount++;
             clearTimeout(secretClickTimer);
             secretClickTimer = setTimeout(() => {
                 secretClickCount = 0;
             }, 1000);
-            
+
             if (secretClickCount >= 5) {
                 window.isTestMode = !window.isTestMode;
                 alert(window.isTestMode ? "🔧 進入「全變爻」測試模式 (必定觸發動畫)" : "🔧 關閉測試模式");
